@@ -1,0 +1,17 @@
+{
+  "name": "shoppable-video-app",
+  "version": "1.0.0",
+  "description": "Shoppable Video Shopify App",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

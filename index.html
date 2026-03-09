@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopReel — Shoppable Video Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #18181f;
+    --border: #2a2a35;
+    --accent: #ff5c35;
+    --accent2: #ff8f6b;
+    --gold: #f5c542;
+    --text: #f0eff8;
+    --muted: #6b6a7a;
+    --green: #2dda93;
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 20px;
+    position: fixed;
+    height: 100vh;
+    top: 0; left: 0;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: var(--accent);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .nav-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 20px 0 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    text-decoration: none;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .nav-item.active { color: var(--accent); }
+
+  .nav-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 14px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface2);
+    font-size: 0.82rem;
+  }
+
+  .shop-name {
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+    margin-bottom: 2px;
+  }
+
+  .shop-status {
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+  }
+
+  .shop-status::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Main */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    padding: 36px 40px;
+    max-width: calc(100vw - 240px);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .page-subtitle { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: var(--accent); }
+
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.gold { color: var(--gold); }
+
+  /* Upload Button */
+  .btn {
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #e04d2a; transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+
+  .btn-danger {
+    background: transparent;
+    color: #ff6060;
+    border: 1px solid #3a2020;
+  }
+  .btn-danger:hover { background: #3a2020; }
+
+  /* Video Grid */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .video-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .video-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255,92,53,0.1);
+  }
+
+  .video-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9/16;
+    background: var(--surface2);
+    overflow: hidden;
+    max-height: 280px;
+  }
+
+  .video-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .video-card:hover .video-thumb-overlay { opacity: 1; }
+
+  .play-btn {
+    width: 50px; height: 50px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #111;
+  }
+
+  .video-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--green);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .video-badge.inactive {
+    background: var(--muted);
+    color: var(--bg);
+  }
+
+  .video-info {
+    padding: 16px;
+  }
+
+  .video-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .video-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .product-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .product-chip img {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    object-fit: cover;
+  }
+
+  .video-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .video-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .video-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .toggle-active {
+    width: 36px; height: 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle-active.on { background: var(--green); }
+  .toggle-active.off { background: var(--border); }
+
+  .toggle-active::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    transition: left 0.2s;
+  }
+
+  .toggle-active.on::after { left: 19px; }
+  .toggle-active.off::after { left: 3px; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    grid-column: 1 / -1;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .empty-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--muted);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 36px;
+    transform: translateY(20px);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .modal-subtitle { color: var(--muted); font-size: 0.87rem; margin-bottom: 28px; }
+
+  .form-group { margin-bottom: 22px; }
+
+  .form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(255,92,53,0.04);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .upload-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+  .upload-text { color: var(--muted); font-size: 0.87rem; }
+  .upload-text strong { color: var(--accent); }
+
+  .upload-preview {
+    width: 100%;
+    max-height: 200px;
+    border-radius: 9px;
+    object-fit: cover;
+    margin-top: 12px;
+  }
+
+  /* Product search */
+  .product-search-results {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .product-result {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .product-result:last-child { border-bottom: none; }
+
+  .product-result:hover { background: var(--surface2); }
+
+  .product-result.selected { background: rgba(255,92,53,0.08); }
+
+  .product-result img {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: var(--surface2);
+  }
+
+  .product-result-title { font-size: 0.87rem; font-weight: 500; flex: 1; }
+  .product-result-price { color: var(--green); font-size: 0.82rem; font-weight: 600; }
+
+  .selected-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .selected-tag {
+    background: rgba(255,92,53,0.12);
+    border: 1px solid rgba(255,92,53,0.3);
+    color: var(--accent2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .selected-tag button {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error { border-color: #ff6060; color: #ff6060; }
+
+  /* Loading spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Setup screen */
+  .setup-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+  }
+
+  .setup-screen.visible { display: flex; }
+
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .setup-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .setup-subtitle { color: var(--muted); margin-bottom: 28px; font-size: 0.9rem; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">▶</div>
+    Shop<span>Reel</span>
+  </div>
+
+  <div class="nav-label">Main</div>
+  <a class="nav-item active" onclick="showPage('videos')">
+    <span class="icon">🎬</span> Videos
+  </a>
+  <a class="nav-item" onclick="showPage('analytics')">
+    <span class="icon">📊</span> Analytics
+  </a>
+  <a class="nav-item" onclick="showPage('settings')">
+    <span class="icon">⚙️</span> Settings
+  </a>
+
+  <div class="nav-label">Help</div>
+  <a class="nav-item" href="https://help.shopify.com" target="_blank">
+    <span class="icon">📖</span> Shopify Docs
+  </a>
+
+  <div class="sidebar-footer" id="shopInfo">
+    <div class="shop-name" id="shopNameEl">Loading...</div>
+    <div class="shop-status">Connected</div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main" id="mainContent">
+
+  <!-- Videos Page -->
+  <div id="page-videos">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Shoppable Videos</div>
+        <div class="page-subtitle">Upload videos, tag products, and boost conversions</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">
+        ＋ Upload Video
+      </button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Videos</div>
+        <div class="stat-value accent" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Views</div>
+        <div class="stat-value" id="stat-views">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Product Clicks</div>
+        <div class="stat-value green" id="stat-clicks">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Videos</div>
+        <div class="stat-value gold" id="stat-active">0</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Your Videos</div>
+    </div>
+
+    <div class="video-grid" id="videoGrid">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🎬</div>
+        <div class="empty-title">No videos yet</div>
+        <p style="color:var(--muted);font-size:0.87rem;margin-bottom:20px">Upload your first shoppable video to get started</p>
+        <button class="btn btn-primary" onclick="openModal()">＋ Upload Video</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Page -->
+  <div id="page-analytics" style="display:none">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Analytics</div>
+        <div class="page-subtitle">Track your shoppable video performance</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Views</div>
+        <div class="stat-value" id="a-views">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Clicks</div>
+        <div class="stat-value green" id="a-clicks">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Click-through Rate</div>
+        <div class="stat-value accent" id="a-ctr">0%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Videos</div>
+        <div class="stat-value gold" id="a-active">0</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;color:var(--muted)">
+      <div style="font-size:2.5rem;margin-bottom:12px">📈</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text)">Video Performance</div>
+      <p style="margin-top:8px;font-size:0.87rem">Analytics update in real-time as shoppers interact with your videos on the storefront.</p>
+    </div>
+  </div>
+
+  <!-- Settings Page -->
+  <div id="page-settings" style="display:none">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Settings</div>
+        <div class="page-subtitle">Configure your shoppable video widget</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:600px">
+      <div class="form-group">
+        <label class="form-label">Widget Position</label>
+        <select class="form-input" id="widgetPosition">
+          <option value="bottom-right">Bottom Right</option>
+          <option value="bottom-left">Bottom Left</option>
+          <option value="inline">Inline (Homepage Section)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Accent Color</label>
+        <input type="color" class="form-input" value="#ff5c35" style="height:44px;cursor:pointer">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Show on</label>
+        <select class="form-input" id="showOn">
+          <option value="all">All Pages</option>
+          <option value="home">Homepage Only</option>
+          <option value="product">Product Pages Only</option>
+        </select>
+      </div>
+      <button class="btn btn-primary">Save Settings</button>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:600px;margin-top:20px">
+      <div class="section-title" style="margin-bottom:16px">Install Widget Manually</div>
+      <p style="color:var(--muted);font-size:0.87rem;margin-bottom:12px">If the script tag wasn't auto-installed, add this to your theme's <code style="color:var(--accent)">&lt;/body&gt;</code> tag:</p>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;font-family:monospace;font-size:0.82rem;color:var(--accent2);word-break:break-all" id="embedCode"></div>
+      <button class="btn btn-ghost" style="margin-top:10px" onclick="copyEmbed()">📋 Copy Code</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Upload Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">Upload Shoppable Video</div>
+    <div class="modal-subtitle">Add a video and tag your products for a seamless shopping experience</div>
+
+    <div class="form-group">
+      <label class="form-label">Video Title</label>
+      <input type="text" class="form-input" id="videoTitle" placeholder="e.g. Summer Collection Lookbook">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Video File</label>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept="video/*" id="videoFile" onchange="handleFileSelect(event)">
+        <div class="upload-icon">🎬</div>
+        <div class="upload-text">
+          <strong>Click to upload</strong> or drag & drop<br>
+          MP4, MOV, WebM — up to 100MB
+        </div>
+        <video class="upload-preview" id="videoPreview" controls style="display:none"></video>
+      </div>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tag Products</label>
+      <input type="text" class="form-input" id="productSearch"
+        placeholder="Search your Shopify products..."
+        oninput="searchProducts(this.value)">
+      <div class="product-search-results" id="productResults" style="display:none;margin-top:8px"></div>
+      <div class="selected-products" id="selectedProducts"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="uploadVideo()" id="uploadBtn">
+        <div class="spinner" id="uploadSpinner"></div>
+        Upload & Publish
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── State ─────────────────────────────────────────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  const SHOP = params.get('shop') || localStorage.getItem('shop');
+  const HOST = window.location.origin;
+
+  if (SHOP) {
+    localStorage.setItem('shop', SHOP);
+    document.getElementById('shopNameEl').textContent = SHOP;
+  }
+
+  let videos = [];
+  let selectedProductIds = [];
+  let selectedProductData = [];
+  let searchTimeout;
+
+  // ─── Init ───────────────────────────────────────────────────────────────────
+  async function init() {
+    if (!SHOP) {
+      showSetupPrompt();
+      return;
+    }
+    document.getElementById('embedCode').textContent =
+      `<script src="${HOST}/widget/shoppable-video.js" data-shop="${SHOP}"><\/script>`;
+    await loadVideos();
+  }
+
+  function showSetupPrompt() {
+    const main = document.getElementById('mainContent');
+    main.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:80vh">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px;max-width:480px;width:100%;text-align:center">
+          <div style="font-size:3rem;margin-bottom:16px">🔗</div>
+          <div class="modal-title" style="margin-bottom:10px">Connect Your Shop</div>
+          <div class="modal-subtitle">Enter your Shopify store URL to get started</div>
+          <input type="text" class="form-input" id="shopInput" placeholder="yourstore.myshopify.com" style="margin-bottom:16px">
+          <button class="btn btn-primary" style="width:100%" onclick="connectShop()">Connect Store →</button>
+        </div>
+      </div>`;
+  }
+
+  function connectShop() {
+    const shop = document.getElementById('shopInput').value.trim();
+    if (!shop) return;
+    window.location.href = `/auth?shop=${shop}`;
+  }
+
+  // ─── Load Videos ────────────────────────────────────────────────────────────
+  async function loadVideos() {
+    try {
+      const res = await fetch('/api/videos');
+      videos = await res.json();
+      renderVideos();
+      updateStats();
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  function updateStats() {
+    const myVideos = videos.filter(v => v.shop === SHOP);
+    document.getElementById('stat-total').textContent = myVideos.length;
+    document.getElementById('stat-views').textContent = myVideos.reduce((s, v) => s + (v.views||0), 0).toLocaleString();
+    document.getElementById('stat-clicks').textContent = myVideos.reduce((s, v) => s + (v.clicks||0), 0).toLocaleString();
+    document.getElementById('stat-active').textContent = myVideos.filter(v => v.active).length;
+
+    // analytics page
+    const tv = myVideos.reduce((s, v) => s + (v.views||0), 0);
+    const tc = myVideos.reduce((s, v) => s + (v.clicks||0), 0);
+    document.getElementById('a-views').textContent = tv.toLocaleString();
+    document.getElementById('a-clicks').textContent = tc.toLocaleString();
+    document.getElementById('a-ctr').textContent = tv > 0 ? ((tc/tv)*100).toFixed(1)+'%' : '0%';
+    document.getElementById('a-active').textContent = myVideos.filter(v => v.active).length;
+  }
+
+  function renderVideos() {
+    const grid = document.getElementById('videoGrid');
+    const myVideos = videos.filter(v => v.shop === SHOP);
+
+    if (myVideos.length === 0) {
+      grid.innerHTML = `<div class="empty-state">
+        <div class="empty-icon">🎬</div>
+        <div class="empty-title">No videos yet</div>
+        <p style="color:var(--muted);font-size:0.87rem;margin-bottom:20px">Upload your first shoppable video</p>
+        <button class="btn btn-primary" onclick="openModal()">＋ Upload Video</button>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = myVideos.map(v => `
+      <div class="video-card" data-id="${v.id}">
+        <div class="video-thumb">
+          <video src="${v.video_url}" preload="metadata" muted playsinline></video>
+          <div class="video-thumb-overlay">
+            <div class="play-btn" onclick="previewVideo('${v.video_url}')">▶</div>
+          </div>
+          <div class="video-badge ${v.active ? '' : 'inactive'}">${v.active ? 'Live' : 'Draft'}</div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">${v.title}</div>
+          <div class="video-products">
+            ${(v.products||[]).map(p => `
+              <div class="product-chip">
+                ${p.image ? `<img src="${p.image}" alt="">` : ''}
+                ${p.title?.substring(0,20)}${p.title?.length > 20 ? '…' : ''}
+              </div>`).join('')}
+            ${!v.products?.length ? '<span style="color:var(--muted);font-size:0.75rem">No products tagged</span>' : ''}
+          </div>
+          <div class="video-meta">
+            <span>👁 ${(v.views||0).toLocaleString()} views</span>
+            <span>🛍 ${(v.clicks||0).toLocaleString()} clicks</span>
+          </div>
+          <div class="video-actions">
+            <button class="toggle-active ${v.active ? 'on' : 'off'}"
+              onclick="toggleActive('${v.id}', ${v.active})" title="${v.active ? 'Deactivate' : 'Activate'}"></button>
+            <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.78rem;flex:1"
+              onclick="previewVideo('${v.video_url}')">Preview</button>
+            <button class="btn btn-danger" style="padding:6px 12px;font-size:0.78rem"
+              onclick="deleteVideo('${v.id}')">🗑</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ─── Modal ──────────────────────────────────────────────────────────────────
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.getElementById('videoTitle').value = '';
+    document.getElementById('videoFile').value = '';
+    document.getElementById('videoPreview').style.display = 'none';
+    document.getElementById('productResults').style.display = 'none';
+    document.getElementById('productSearch').value = '';
+    selectedProductIds = [];
+    selectedProductData = [];
+    renderSelectedProducts();
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const preview = document.getElementById('videoPreview');
+    preview.src = url;
+    preview.style.display = 'block';
+  }
+
+  // ─── Product Search ─────────────────────────────────────────────────────────
+  function searchProducts(q) {
+    clearTimeout(searchTimeout);
+    if (!q.trim()) {
+      document.getElementById('productResults').style.display = 'none';
+      return;
+    }
+    searchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/products?shop=${SHOP}&q=${encodeURIComponent(q)}`);
+        const products = await res.json();
+        renderProductResults(products);
+      } catch(e) {
+        console.error(e);
+      }
+    }, 350);
+  }
+
+  function renderProductResults(products) {
+    const container = document.getElementById('productResults');
+    if (!products.length) {
+      container.style.display = 'none';
+      return;
+    }
+    container.style.display = 'block';
+    container.innerHTML = products.map(p => `
+      <div class="product-result ${selectedProductIds.includes(p.id.toString()) ? 'selected' : ''}"
+        onclick="toggleProduct(${p.id}, '${p.title.replace(/'/g,"\\'")}', '${p.images[0]?.src || ''}', '${p.variants[0]?.price}', '${p.handle}', '${p.variants[0]?.id}')">
+        <img src="${p.images[0]?.src || ''}" alt="" onerror="this.style.display='none'">
+        <div class="product-result-title">${p.title}</div>
+        <div class="product-result-price">$${p.variants[0]?.price}</div>
+        ${selectedProductIds.includes(p.id.toString()) ? '<span style="color:var(--green)">✓</span>' : ''}
+      </div>
+    `).join('');
+  }
+
+  function toggleProduct(id, title, image, price, handle, variantId) {
+    const idStr = id.toString();
+    if (selectedProductIds.includes(idStr)) {
+      selectedProductIds = selectedProductIds.filter(i => i !== idStr);
+      selectedProductData = selectedProductData.filter(p => p.id !== idStr);
+    } else {
+      selectedProductIds.push(idStr);
+      selectedProductData.push({ id: idStr, title, image, price, handle, variant_id: variantId });
+    }
+    renderSelectedProducts();
+    // Re-render search results to update checkmarks
+    const results = document.querySelectorAll('.product-result');
+    results.forEach(el => {
+      const idMatch = el.onclick?.toString().includes(id.toString());
+    });
+    searchProducts(document.getElementById('productSearch').value);
+  }
+
+  function renderSelectedProducts() {
+    const container = document.getElementById('selectedProducts');
+    container.innerHTML = selectedProductData.map(p => `
+      <div class="selected-tag">
+        🛍 ${p.title.substring(0,25)}${p.title.length > 25 ? '…' : ''}
+        <button onclick="toggleProduct('${p.id}', '${p.title.replace(/'/g,"\\'")}')">×</button>
+      </div>
+    `).join('');
+  }
+
+  // ─── Upload ─────────────────────────────────────────────────────────────────
+  async function uploadVideo() {
+    const title = document.getElementById('videoTitle').value.trim();
+    const fileInput = document.getElementById('videoFile');
+
+    if (!title) { showToast('Please enter a video title', 'error'); return; }
+    if (!fileInput.files[0]) { showToast('Please select a video file', 'error'); return; }
+
+    const btn = document.getElementById('uploadBtn');
+    const spinner = document.getElementById('uploadSpinner');
+    btn.disabled = true;
+    spinner.style.display = 'block';
+
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    progressBar.style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('video', fileInput.files[0]);
+    formData.append('title', title);
+    formData.append('shop', SHOP);
+    formData.append('products', JSON.stringify(selectedProductIds));
+
+    try {
+      // Simulate progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress = Math.min(progress + 8, 85);
+        progressFill.style.width = progress + '%';
+      }, 200);
+
+      const res = await fetch('/api/videos', { method: 'POST', body: formData });
+      const video = await res.json();
+
+      clearInterval(interval);
+      progressFill.style.width = '100%';
+
+      setTimeout(() => {
+        progressBar.style.display = 'none';
+        progressFill.style.width = '0%';
+      }, 500);
+
+      if (res.ok) {
+        videos.unshift(video);
+        renderVideos();
+        updateStats();
+        closeModal();
+        showToast('✅ Video uploaded and live on your store!', 'success');
+      } else {
+        showToast(video.error || 'Upload failed', 'error');
+      }
+    } catch(e) {
+      showToast('Upload failed: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+    }
+  }
+
+  // ─── Video Actions ──────────────────────────────────────────────────────────
+  async function toggleActive(id, current) {
+    const res = await fetch(`/api/videos/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active: !current })
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      videos = videos.map(v => v.id === id ? updated : v);
+      renderVideos();
+      updateStats();
+    }
+  }
+
+  async function deleteVideo(id) {
+    if (!confirm('Delete this video? This cannot be undone.')) return;
+    const res = await fetch(`/api/videos/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      videos = videos.filter(v => v.id !== id);
+      renderVideos();
+      updateStats();
+      showToast('Video deleted', 'success');
+    }
+  }
+
+  function previewVideo(url) {
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;align-items:center;justify-content:center;cursor:pointer';
+    modal.innerHTML = `<video src="${url}" controls autoplay style="max-height:90vh;max-width:90vw;border-radius:12px"></video>
+      <button style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;color:white;font-size:1.5rem;width:40px;height:40px;border-radius:50%;cursor:pointer;line-height:1">×</button>`;
+    modal.onclick = (e) => { if (e.target === modal || e.target.tagName === 'BUTTON') modal.remove(); };
+    document.body.appendChild(modal);
+  }
+
+  // ─── Navigation ─────────────────────────────────────────────────────────────
+  function showPage(page) {
+    ['videos', 'analytics', 'settings'].forEach(p => {
+      document.getElementById(`page-${p}`).style.display = p === page ? 'block' : 'none';
+    });
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  // ─── Toast ──────────────────────────────────────────────────────────────────
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function copyEmbed() {
+    navigator.clipboard.writeText(document.getElementById('embedCode').textContent);
+    showToast('Embed code copied!', 'success');
+  }
+
+  init();
+</script>
+</body>
+</html>
