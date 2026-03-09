@@ -1,13 +1,17 @@
 {
-  "name": "shoppable-video-app",
+  "name": "shopreel",
   "version": "1.0.0",
   "description": "Shoppable Video Shopify App",
-  "main": "server/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "nodemon server/index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1"
   },
