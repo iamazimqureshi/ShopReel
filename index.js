@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
 const path = require('path');
@@ -21,7 +22,7 @@ function writeDB(data) {
 // ─── File uploads ─────────────────────────────────────────────────────────────
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, '../uploads');
+    const dir = path.join(__dirname, 'uploads');
     fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
@@ -30,9 +31,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } });
 
 // ─── Serve static files ──────────────────────────────────────────────────────
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-app.use('/admin', express.static(path.join(__dirname, '../admin')));
-app.use('/widget', express.static(path.join(__dirname, '../widget')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/admin', express.static(path.join(__dirname, 'admin')));
+app.use('/widget', express.static(path.join(__dirname, 'widget')));
 
 // ─── Shopify OAuth ───────────────────────────────────────────────────────────
 const { SHOPIFY_API_KEY, SHOPIFY_API_SECRET, HOST } = process.env;
@@ -199,4 +200,5 @@ app.get('/api/products', async (req, res) => {
 // ─── Add to cart proxy ────────────────────────────────────────────────────────
 // Cart is handled client-side via Shopify AJAX API on the storefront
 
-app.listen(3000, () => console.log('🎬 Shoppable Video App running on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🎬 ShopReel running on port ${PORT}`));
